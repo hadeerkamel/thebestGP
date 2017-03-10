@@ -4,6 +4,7 @@ function [ Line_indces RotatedWord ] = FindBaseLine( Word_I )
 
 
 N=1;
+x=0;
 [subwords nsubwords]=SegmentWords(Word_I,20);
 Line_indces=0;
 for subW=1:(nsubwords-1)

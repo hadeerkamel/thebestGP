@@ -5,6 +5,7 @@ function [ rowsToCutAt nLines] = CutLinesAt( I )
 % compIDilated = imerode(I,SE);
 %figure,imshow(I);
 verticalProfile = sum(I,2);
+%Yomna On GitHub
 %plot(verticalProfile);
 L = length(verticalProfile);
 zeroRowsCount = 0;

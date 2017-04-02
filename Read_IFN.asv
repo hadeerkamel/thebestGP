@@ -10,21 +10,17 @@ for nameindex=1:9
         [Line_index RotatedWord ]=FindBaseLine(Im);
         % s=slpit_isolated_chars_and_subwords(RotatedWord,Line_indces);
         
-        % bw=LoopAgent(RotatedWord);
-        % bw=RemoveSmallComp( bw);
+        bw=LoopAgent(RotatedWord);
+        bw=RemoveSmallComp( bw);
         %figure,imshow(bw);
         
-        dilatedImage = imdilate(RotatedWord,strel('disk',5));
+        dilatedImage = imdilate(bw,strel('disk',7));
         figure,imshow(dilatedImage);
         
         thinedImage = bwmorph(dilatedImage,'thin',inf);
-        figure,imshow(thinedImage);
+        %figure,imshow(thinedImage);
         
-        bw=LoopAgent(thinedImage);
-        figure,imshow(bw);
-        bw=RemoveSmallComp( bw);
-        figure,imshow(bw);
-        %bw=thinedImage;
+        bw=thinedImage;
         
         %  [ subWords nsubWords ] = SegmentWords( bw,5);
         %for w=1:nsubWords
@@ -35,27 +31,24 @@ for nameindex=1:9
             end
             figure,imshow(bw),hold on;
             plot(Endpoints(1,:), Endpoints(2,:), 'r.');
-            [N1,N2]=size(Endpoints);
             %while there is no branch
-            for e=1:N2
-                i=Endpoints(2,e);
-                j=Endpoints(1,e);
-                while(1)
-                    %remove
-                    bw(i, j)=0;
-                    %imshow(bw),hold on;
-                    %move
-                    [f,newi,newj]=decideamove(bw,i,j);
-                    if(f==0)
-                        break;
-                    else
-                        i=newi;
-                        j=newj;
-                    end
-                    %plot(j, i, 'r.');
+            i=Endpoints(2,1);
+            j=Endpoints(1,1);
+            while(1)
+                %remove
+                bw(i, j)=0;
+                figure,imshow(bw),hold on;
+                %move
+                [f,newi,newj]=decideamove(bw,i,j);
+                if(f==0)
+                    break;
+                else
+                    i=newi;
+                    j=newj;
                 end
-                figure,imshow(bw);
+                plot(j, i, 'r.');
             end
+            
         end
     end
     % end

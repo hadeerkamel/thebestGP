@@ -20,8 +20,8 @@ bw=Im;
     se=strel('disk',1);
     bw_filled_area= imdilate(bw_filled_area,se);
     %figure,imshow(bw_filled_area);
-    bw=bitxor(bw_filled_area,bw_fill);
-    figure,imshow(bw);
+    bw{i}=bitxor(bw_filled_area,bw_fill);
+    figure,imshow(bw{i});
 %end
 end
 

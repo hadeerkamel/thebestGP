@@ -32,6 +32,7 @@ for ll = 1:L
           columnsTocutAt(nWords) = ll;
           zeroColumnsCount = 0;
           nWords = nWords + 1;
+          
 end
 columnsTocutAt(nWords) = W;
 end

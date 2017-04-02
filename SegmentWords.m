@@ -17,6 +17,6 @@ for wordIndex = 1:nWords
 end
 
 
-
+nWords=nWords-1;
 end
 

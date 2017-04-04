@@ -43,7 +43,7 @@ Line_index=0;
         end
      end
     
-    [h width ]=size(RotatedWord);
+    %[h width ]=size(RotatedWord);
     
     se=strel('disk',1);
     RotatedWord= imerode(RotatedWord,se);
@@ -51,9 +51,9 @@ Line_index=0;
     RotatedWord=bwmorph( RotatedWord,'bridge',inf);
     RotatedWord=bwmorph( RotatedWord,'spur');
     
-    figure,imshow(RotatedWord),hold on;
-    xy=[1 Line_index;width Line_index];
-    plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+%     figure,imshow(RotatedWord),hold on;
+%     xy=[1 Line_index;width Line_index];
+%     plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
    
 end
 

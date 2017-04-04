@@ -51,3 +51,7 @@ else
     newj=M(2,1);
 end
 
+if(newi==i+1&&newj==j+1&&bw(i+2,j+2))
+    f=0;
+end
+

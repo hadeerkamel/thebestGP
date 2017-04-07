@@ -8,8 +8,7 @@ end
 %figure,imshow(bw),hold on;
 %plot(Endpoints(1,:), Endpoints(2,:), 'r.');
 
-%1-under baseline endpoints ? ? ? ? ? ? ?  ?
-
+%1-under baseline endpoints 
 [N1,N2]=size(Endpoints);
 for e=1:N2
     i=Endpoints(2,e);
@@ -18,8 +17,8 @@ for e=1:N2
         %remove
         bw(i, j)=0;
         %move
-        [f,newi,newj]=decideamove(bw,i,j);
-        if(f==0)
+        [f,newi,newj]=decideamove(bw,i,j,0);
+        if(~f)
             bw(i, j)=1;
             break;
         else
@@ -31,15 +30,15 @@ for e=1:N2
     
 end
 
-%2-under baseline ? ? ? ? ? ?
+%2-under baseline
 
 % find a deepest point under baseline
 
-[F,DeepPoints ] = find_DeepPoints( bw,Line_index );
-if(F)
-    figure,imshow(bw),hold on;
-    plot(DeepPoints(1,:), DeepPoints(2,:), 'r.');
-end
+% [F,DeepPoints ] = find_DeepPoints( bw,Line_index );
+% if(F)
+%     figure,imshow(bw),hold on;
+%     plot(DeepPoints(1,:), DeepPoints(2,:), 'r.');
+% end
 % check if it have to up cavities from both sides
 % remove it and both cavities if exist
 

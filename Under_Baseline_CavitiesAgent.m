@@ -8,6 +8,11 @@ end
 %figure,imshow(bw),hold on;
 %plot(Endpoints(1,:), Endpoints(2,:), 'r.');
 
+[h width ]=size(bw);
+%  xy=[1 Line_index;width Line_index];
+%  plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+ 
+
 %1-under baseline endpoints 
 [N1,N2]=size(Endpoints);
 for e=1:N2

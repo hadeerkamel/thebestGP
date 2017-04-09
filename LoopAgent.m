@@ -13,10 +13,11 @@ function [ bw ] = LoopAgent( Im )
 %         plot(boundary(:,2), boundary(:,1), 'b', 'LineWidth', 2)
 %     end
 bw=Im;
+%figure,imshow(bw);
     bw_fill= imfill(Im,'holes');
-    %figure,imshow(bw_fill);
+ %   figure,imshow(bw_fill);
     bw_filled_area=bitxor(Im,bw_fill);
-    %figure,imshow(bw_filled_area);
+   % figure,imshow(bw_filled_area);
     se=strel('disk',1);
     bw_filled_area= imdilate(bw_filled_area,se);
     %figure,imshow(bw_filled_area);

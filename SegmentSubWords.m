@@ -12,7 +12,7 @@ for wordIndex = 1:nWords
         minY = 1;
         Words{wordIndex-1 + TotalNSubWords} = imcrop(Line,[minX minY WidthofWord H]);
        % figure,imshow(Words{wordIndex-1 + TotalNSubWords});
-        [ SubWord orig] = RemoveSmallComp( Words{wordIndex-1+ TotalNSubWords},200 );
+        [ SubWord ] = RemoveSmallComp( Words{wordIndex-1+ TotalNSubWords},200 );
         CC = bwconncomp(SubWord);
         N = CC.NumObjects;
         IgnoredCC = 0;

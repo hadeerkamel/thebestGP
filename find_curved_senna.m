@@ -7,7 +7,7 @@ F=0;
 %Endpoints=0;
 horizontalProjection = sum(I,2);
 [Maxpeak BL]=max(horizontalProjection);
-    
+    step();
 [H W] =size(I);
 figure,imshow(I),hold on;
 xy=[1 BL;W BL];

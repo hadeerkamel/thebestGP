@@ -11,11 +11,14 @@ end
 cutting_pints(1)=1;
 for e=1:2:N2
     j1=Endpoints(1,e);
+    if(e+1>N2)
+        break;
+    end
     j2=Endpoints(1,e+1);
     N=N+1;
     cutting_pints(N)=min([j1 j2])+(abs(j1-j2)/2);
     xy=[ cutting_pints(N) 1;cutting_pints(N) h];
-    plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+    %plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
 end
 
 

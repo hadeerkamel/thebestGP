@@ -8,13 +8,20 @@ for nameindex=1:9
         Im=imread(s);
         [height width]=size(Im);
         figure,imshow(Im);
+        
+        [ chars,nchars] = SegmentCharacters( Im);
+%         for charno=1:nchars-1
+%         
+%                   figure,imshow(chars{charno});
+%                  end
+        
         %%
-        [Line_index RotatedWord ]=FindBaseLine(Im);
+       % [Line_index RotatedWord ]=FindBaseLine(Im);
         %% Smooth
         
-        dilatedImage = imdilate(RotatedWord,strel('disk',5));
+        %dilatedImage = imdilate(RotatedWord,strel('disk',5));
         %figure,imshow(dilatedImage);
-        thinedImage = bwmorph(dilatedImage,'thin',inf);
+        %thinedImage = bwmorph(dilatedImage,'thin',inf);
         %%print baseline
         
         %                 figure,imshow(thinedImage),hold on;
@@ -33,17 +40,18 @@ for nameindex=1:9
         %     figure,imshow(Words{w});
         %end
         
-        figure,imshow(thinedImage);
-        bw=RemoveSmallComp( thinedImage,30);
-        
-        bw=LoopAgent(bw);
-        bw=RemoveSmallComp( bw,20);
-        
-        
-        
-        bw=Under_Baseline_CavitiesAgent( Line_index,bw );
-        bw=RemoveSmallComp( bw,20);
-        
+        %figure,imshow(thinedImage);
+%         bw=RemoveSmallComp( thinedImage,30);
+%         figure,imshow(bw);
+%         
+%         bw=LoopAgent(bw);
+%         bw=RemoveSmallComp( bw,20);
+%         
+%         
+%         
+%         bw=Under_Baseline_CavitiesAgent( Line_index,bw );
+%         bw=RemoveSmallComp( bw,20);
+%         
         %         bw=LoopAgent(bw);
         %         bw=RemoveSmallComp( bw,20);
         %figure,imshow(bw);
@@ -52,54 +60,31 @@ for nameindex=1:9
         %
         
         
-       bw = imdilate(bw,strel('disk',5));
-        %figure,imshow(dilatedImage);
-        bw = bwmorph(bw,'thin',inf);
-        
-        
-       [ F,Endpoints ] = FindEndPonits( bw,0 );
-       
-       
-       
-%         figure,imshow(bw),hold on;
-%         plot(Endpoints(1,:), Endpoints(2,:), 'r.');
+%         bw = imdilate(bw,strel('disk',5));
+%         %figure,imshow(dilatedImage);
+%         bw = bwmorph(bw,'thin',inf);
 %         
-%         [chars,nchars]=segment(thinedImage,Endpoints);
-%         for charno=1:nchars-1
-%             
-%          figure,imshow(chars{charno});
-%         end
-
-
+%         
+%         [ F,Endpoints ] = FindEndPonits( bw,0 );
+        
+        
+        
+        %         figure,imshow(bw),hold on;
+        %         plot(Endpoints(1,:), Endpoints(2,:), 'r.');
+        %
+        %         [chars,nchars]=segment(thinedImage,Endpoints);
+        %         for charno=1:nchars-1
+        %
+        %          figure,imshow(chars{charno});
+        %         end
+        
+        
         %  figure,imshow(thinedImage),hold on;
         %[h width ]=size(thinedImage);
-       % xy=[1 Line_index;width Line_index];
+        % xy=[1 Line_index;width Line_index];
         %plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
         
-       
-        figure,imshow(bw),hold on;
-                [N1,N2]=size(Endpoints);
-                for e=1:N2
-                   plot(Endpoints(1,e), Endpoints(2,e), 'r.');
-                    j=Endpoints(1,e);
-                    for i=Endpoints(2,e)+2:height
-                        if(bw(i,j))
-                            bw(Endpoints(2,e):i,j)=1;
-                            break;
-                        end
-                    end
         
-        
-        %             [ F ] = is_curved( bw,Endpoints(:,e) );
-        %             if(F)
-        %                 plot(Endpoints(1,e), Endpoints(2,e), 'b.');
-        %             end
-                end
-                figure,imshow(bw);
-                bw=LoopAgent(bw);
-                bw=RemoveSmallComp( bw,20);
-        
-         figure,imshow(bw);
         
         %         %bw = imdilate(bw,strel('disk',3));
         %         %bw = bwmorph(bw,'thin',inf);

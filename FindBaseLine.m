@@ -20,18 +20,7 @@ horizontalProjection = sum(Word,2);
 [Maxpeak Line_index]=max(horizontalProjection);
 
 
-for angle=-5:0.5:-0.5
-    I=imrotate(Word,angle);
-    
-    horizontalProjection = sum(I,2);
-    [val index]=max(horizontalProjection);
-    if(val>Maxpeak)
-        Maxpeak=val;
-        Line_index=index;
-        RotatedWord=I;
-    end
-end
-for angle=0.5:0.5:5
+for angle=-5:0.5:5
     I=imrotate(Word,angle);
     
     horizontalProjection = sum(I,2);

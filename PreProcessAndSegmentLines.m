@@ -18,10 +18,11 @@ function [ Lines nLines] = PreProcessAndSegmentLines( I )
 %R = info.ColorType;
 
 BinaryImage = im2bw(I,0.8);
-
+%figure,imshow(BinaryImage);
 compI = imcomplement(BinaryImage);
 SE = strel('disk',20);
 compIDilated = imdilate(compI,SE);
+%figure,imshow(compIDilated);
 [compIDilated] = RemoveSmallComp( compIDilated,2000);
 %figure,imshow(compIDilated);
 [H W] = size(compIDilated);
@@ -63,6 +64,7 @@ end
 %RotatedImage = imrotate(compIDilated,angle);
 %figure,imshow(AlignedImage);
 [newCroppedI , ~, ~] = SegmentConnComp(compIDilated,compI);
+%figure,imshow(newCroppedI);
 [newDilatedCroppedI , ~, ~] = SegmentConnComp(compIDilated,compIDilated);
 N = CC.NumObjects;
 %figure,imshow(newCroppedI);

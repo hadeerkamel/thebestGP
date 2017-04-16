@@ -9,7 +9,8 @@ fnchars=0;
 [Line_index RotatedWord ]=FindBaseLine(Word);
 %% smooth
 dilatedImage = imdilate(RotatedWord,strel('disk',5));
-%thinedImage = bwmorph(dilatedImage,'thin',inf);
+thinedImage = bwmorph(dilatedImage,'thin',inf);
+%figure, imshow(thinedImage);
 %% segment subwords
 %[ SubWords nSubWords] = SegmentSubWords(dilatedImage,5);
 [ SubWords nSubWords] = SegmentWords(dilatedImage,1);

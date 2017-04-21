@@ -22,7 +22,7 @@ bw=Im;
     bw_filled_area= imdilate(bw_filled_area,se);
     %figure,imshow(bw_filled_area);
     bw=bitxor(bw_filled_area,bw_fill);
-  %  figure,imshow(bw);
+   % figure,imshow(bw);
 %end
 end
 

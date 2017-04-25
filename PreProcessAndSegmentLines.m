@@ -18,12 +18,12 @@ function [ Lines nLines] = PreProcessAndSegmentLines( I )
 %R = info.ColorType;
 
 BinaryImage = im2bw(I,0.8);
-%figure,imshow(BinaryImage);
+% figure,imshow(BinaryImage);
 compI = imcomplement(BinaryImage);
 SE = strel('disk',20);
 compIDilated = imdilate(compI,SE);
 %figure,imshow(compIDilated);
-[compIDilated] = RemoveSmallComp( compIDilated,2000);
+[compIDilated] = RemoveSmallComp( compIDilated,4000);
 %figure,imshow(compIDilated);
 [H W] = size(compIDilated);
 %% Dilate , get corner points and crop
@@ -63,9 +63,9 @@ end
 %AlignedImage = WarpBinaryImage(compIDilated ,corners ,PM);
 %RotatedImage = imrotate(compIDilated,angle);
 %figure,imshow(AlignedImage);
-[newCroppedI , ~, ~] = SegmentConnComp(compIDilated,compI);
+[newCroppedI] = SegmentConnCompUsingBoundingBox(compIDilated,compI);
 %figure,imshow(newCroppedI);
-[newDilatedCroppedI , ~, ~] = SegmentConnComp(compIDilated,compIDilated);
+[newDilatedCroppedI] = SegmentConnCompUsingBoundingBox(compIDilated,compIDilated);
 N = CC.NumObjects;
 %figure,imshow(newCroppedI);
 %point1inLastLine = [maxX itsR];
@@ -85,6 +85,9 @@ for r = HW:-1:1
      end
 end
 %Check skew direction of gotten point in first quarter???!!!
+% figure,imshow(compIDilated);
+% hold on
+% plot(point2inLastLine(1),point2inLastLine(2),'b*');
 c = ceil(3*WH/4);
 if(point2inLastLine(1)<c)
     %mayel l ta7t
@@ -144,7 +147,7 @@ if(bb>100)
         end
     end
 end
-end
+
 % for ii = 1:indexOfPoints
 %     if(points1inLastLineC(ii)==mC )
 %         RR = points1inLastLineR(ii)
@@ -190,6 +193,7 @@ if(skewedAngle<0 && diffInrowsBetweentheTwoLines < 250 && abs(skewedAngle)>5)
 newCroppedI = imrotate(newCroppedI,(skewedAngle + 2));
 newDilatedCroppedI = imrotate(compIDilated,(skewedAngle + 2));
 end
+end
 %figure,imshow(newDilatedCroppedI);
 %figure,imshow(newCroppedI);
 % a1 = mod(atan2( det([v1;v2;]) , dot(v1,v2) ), 2*pi );
@@ -214,6 +218,9 @@ end
 rr = [1 50 100 150 200 250 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000 1050 1100 1150 1200];
 cc = [5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5 5];
 [rowsToCutAt nLines] = CutLinesAt(newCroppedI);
+for i = 1:10
+    Lines{i} = newCroppedI;
+end
 for i = 1:nLines
     if(i==1)
         previousEndRow = 1;
@@ -227,60 +234,99 @@ for i = 1:nLines
     %figure,imshow(Lines{i - 1});
     end
 end
-falseLines = 0;
-dividedflag = 0;
-for i = 2:nLines
-    if(i==4)
-        i = 4;
+%to remove first line if empty
+CC = bwconncomp(Lines{1});
+N = CC.NumObjects;
+numPixels = cellfun(@numel,CC.PixelIdxList);
+if(max(numPixels)<300)
+    for i = 1:nLines - 2
+        Lines{i} = Lines{i+1};
+        LineSizes(i) = LineSizes(i+1);
     end
-    mm = mean(LineSizes)+50;
-    if(LineSizes(i)> mm)
-        %handle way larger
-        for s = 1:10
-            SE = strel('disk',s);
-            compIDilated = imerode(Lines{i-1},SE);
-            [rows newlines] = CutLinesAt(Lines{i-1});
-            
-            if(newlines>0)
-                dividedflag = 1;
-                %newlines = newlines - 1;
-               for j = 2:newlines
-                  H = rows(j) - rows(j - 1);
-                  LineSizes(nLines + j - 1) = H;
-                  minX = 1;
-                  minY = rows(j - 1);
-                  Lines{nLines + j - 1} = imcrop(Lines{i-1},[minX minY W H]);
-                 % figure,imshow(Lines{nLines + j - 1}); 
-               end
-               break;
-            end
-        end
-        if(dividedflag==0)
-            %figure,imshow(Lines{i-1});
-            for ss = 1:15
-            SE = strel('disk',s);
-            LinesDilated = imdilate(Lines{i-1},SE);
-            CC = bwconncomp(LinesDilated);
-            N = CC.NumObjects;
-            if(N==1)
-                break;
-            end
-            end
-            [newCroppedI , ~, ~] = SegmentConnComp(LinesDilated,Lines{i-1});
-            [H W] = size(newCroppedI);
-            Lines{nLines} = imcrop(newCroppedI,[1 1 W ceil(H/2)]);
-            %figure,imshow(Lines{nLines});
-            Lines{nLines + 1} = imcrop(newCroppedI,[1 ceil(H/2) W ceil(H/2)]);
-            nLines = nLines + 2;
-            %figure,imshow(Lines{nLines + 1});
-        end
-    elseif(LineSizes(i)< (mean(LineSizes)-50))
-        %handle way smaller
-        falseLines = falseLines + 1;
-        del(falseLines) = i;
-    end
+    nLines = nLines - 1;
 end
-countWhite = 0;
+nLines = nLines - 1;
+dividedflag = 0;
+newlines = 0;
+factor = 0;
+changed = 0;
+for i = 1:nLines
+    %figure,imshow(Lines{i});
+    if(changed==1)
+      i = i + newlines;
+    end
+    
+    avg = mean(LineSizes)+50;
+    medianLineSize = median(LineSizes)+40;
+    if(medianLineSize>300)
+        medianLineSize = FindBestLineSize(LineSizes,nLines) + 40;
+    end
+    if(LineSizes((i - newlines)+1)> avg)
+        %handle way larger
+        factor = ceil(LineSizes(i - newlines+1)/medianLineSize);
+        newlines = newlines + factor - 1;
+        oldLineImage = Lines{i};
+        %figure,imshow(oldLineImage);
+        for LineIndex = nLines:-1:i+1
+            Lines{LineIndex + (factor - 1)} = Lines{LineIndex};
+        end
+        IndexInUnSegmentedLineImage = 1;
+        minY = 1;
+        for nl = 0:(newlines)
+           Lines{i + nl} = imcrop(oldLineImage,[1 minY W (medianLineSize - 40)]);
+           %figure,imshow(Lines{i + nl});
+           minY = (IndexInUnSegmentedLineImage * (medianLineSize-40));
+           IndexInUnSegmentedLineImage = IndexInUnSegmentedLineImage + 1;
+        end
+        nLines = nLines + factor - 1;
+        changed  = 1;
+    
+    end     
+        
+        
+%         for s = 1:10
+%             SE = strel('disk',s);
+%             compIDilated = imerode(Lines{i-1},SE);
+%             figure,imshow(compIDilated);
+%             [rows newlines] = CutLinesAt(Lines{i-1});
+%             
+%             if(newlines>0)
+%                 dividedflag = 1;
+%                 %newlines = newlines - 1;
+%                for j = 2:newlines
+%                   H = rows(j) - rows(j - 1);
+%                   LineSizes(nLines + j - 1) = H;
+%                   minX = 1;
+%                   minY = rows(j - 1);
+%                   Lines{nLines + j - 1} = imcrop(Lines{i-1},[minX minY W H]);
+%                  % figure,imshow(Lines{nLines + j - 1}); 
+%                end
+%                break;
+%             end
+%         if(dividedflag==0)
+%             %figure,imshow(Lines{i-1});
+%             for ss = 1:15
+%             SE = strel('disk',s);
+%             LinesDilated = imdilate(Lines{i-1},SE);
+%             CC = bwconncomp(LinesDilated);
+%             N = CC.NumObjects;
+%             if(N==1)
+%                 break;
+%             end
+%             end
+%             [newCroppedI , ~, ~] = SegmentConnComp(LinesDilated,Lines{i-1});
+%             [H W] = size(newCroppedI);
+%             Lines{nLines} = imcrop(newCroppedI,[1 1 W ceil(H/2)]);
+%             %figure,imshow(Lines{nLines});
+%             Lines{nLines + 1} = imcrop(newCroppedI,[1 ceil(H/2) W ceil(H/2)]);
+%             nLines = nLines + 2;
+            %figure,imshow(Lines{nLines + 1});
+
+    end
+
+
+end
+
 % for n = 1:nLines
 %     [H W] = size(Lines{n});
 %     
@@ -295,8 +341,7 @@ countWhite = 0;
 %     if(countWhite<100);
 %     countWhite = 0;
 % end
-nLines = nLines - 1;
-end
+
 % % figure,imshow(newCroppedI);
 % columnsToCountLinesAt(1) = W - 20;
 % columnsToCountLinesAt(2) = W - 50;

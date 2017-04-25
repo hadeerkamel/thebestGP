@@ -1,4 +1,4 @@
-function [  ] = seen_agent( im )
+function [ result  ] = seen_agent( im )
 %     bw = imdilate(im,strel('disk',5));
 %     figure,imshow(bw);
 %      bw = bwmorph(bw,'thin',inf);
@@ -47,6 +47,7 @@ function [  ] = seen_agent( im )
                        im(:,c1:c2)=0;
                       im= RemoveSmallComp(im,5);
                        figure,imshow(im);
+                       result=im
                        break;
                    end
                    end

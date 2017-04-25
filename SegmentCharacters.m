@@ -36,7 +36,7 @@ for w=1:nSubWords
         
         bw = semi_loopedCavities( bw );
         bw=RemoveSmallComp( bw,20);
-         seen_agent(bw);
+        bw= seen_agent(bw);
         %figure,imshow(bw);
         %% find endpoints and segment
         [ F,Endpoints ] = FindEndPonits( bw,0 );
